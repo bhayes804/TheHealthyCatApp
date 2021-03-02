@@ -1,6 +1,7 @@
 package wsu.group18.thehealthycat;
 
 import android.content.Context;
+import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -9,7 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.TimePicker;
 
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -41,11 +44,25 @@ public class CustomTimeAdapter extends RecyclerView.Adapter<CustomTimeAdapter.My
         return holder;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onBindViewHolder(final CustomTimeAdapter.MyViewHolder holder, final int position) {
+        int hour;
+        int minutes;
 
+        //holder.editText.setText(editModelArrayList.get(position).getEditTextValue());
+        String time = editModelArrayList.get(position).getEditTextValue();
+        if(time == null){
+            hour = 12;
+            minutes = 0;
+        }
+        else{
+            hour = Integer.valueOf(time.substring(0, 1));
+            minutes = Integer.valueOf(time.substring(3, 4));
+        }
 
-        holder.editText.setText(editModelArrayList.get(position).getEditTextValue());
+        holder.timePicker.setHour(hour);
+        holder.timePicker.setMinute(minutes);
         Log.d("print","yes");
 
     }
@@ -57,14 +74,15 @@ public class CustomTimeAdapter extends RecyclerView.Adapter<CustomTimeAdapter.My
 
     class MyViewHolder extends RecyclerView.ViewHolder{
 
-        protected EditText editText;
+        //protected EditText editText;
+        protected TimePicker timePicker;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            editText = (EditText) itemView.findViewById(R.id.editid);
+            timePicker = (TimePicker) itemView.findViewById(R.id.editid);
 
-            editText.addTextChangedListener(new TextWatcher() {
+            /*editText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -79,6 +97,23 @@ public class CustomTimeAdapter extends RecyclerView.Adapter<CustomTimeAdapter.My
                 @Override
                 public void afterTextChanged(Editable editable) {
 
+                }
+            });*/
+
+            timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+                @Override
+                public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                    String hour = String.valueOf(hourOfDay);
+                    String minutes = String.valueOf(minute);
+                    if(hour.length() < 2){
+                        hour = "0" + hour;
+                    }
+                    if(minutes.length() < 2){
+                        minutes = "0" + minutes;
+                    }
+
+                    String time = hour + ":" + minutes;
+                    editModelArrayList.get(getAdapterPosition()).setEditTextValue(time);
                 }
             });
 

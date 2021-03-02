@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("CAT_NAME", cat.getName());
         intent.putExtra("CAT_TARGET_WEIGHT", cat.getTargetWeightLBS());
         intent.putExtra("CAT_CURRENT_WEIGHT", cat.getCurrentWeightLBS());
+        intent.putExtra("CAT_FEEDING_TIMES", (ArrayList) cat.getFeedingTimes());
+        intent.putExtra("CAT_FEEDING_FREQ", String.valueOf(cat.getFeedingTimes().size()));
         startActivity(intent);
     }
 
