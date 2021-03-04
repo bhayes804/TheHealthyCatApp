@@ -97,6 +97,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
         if(incomingFeedingTimes != null){
             ArrayList<TimeEditModel> t = ConvertListToTimeEditModel(incomingFeedingTimes);
+            editModelArrayList = t;
             customAdapter.UpdateList(t);
         }
     }
@@ -117,8 +118,9 @@ public class SettingsActivity extends AppCompatActivity {
     }*/
 
     public void OnCancel(View v){
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        //Intent intent = new Intent(this, MainActivity.class);
+        //startActivity(intent);
+        finish();
     }
 
     public void OnSave(View v){
@@ -137,7 +139,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         for(int i = 0; i < listSize; i++){
             TimeEditModel editModel = new TimeEditModel();
-            //editModel.setEditTextValue(String.valueOf(i));
             list.add(editModel);
         }
 
@@ -171,6 +172,13 @@ public class SettingsActivity extends AppCompatActivity {
             TimeEditModel e = new TimeEditModel();
             String hour = String.valueOf(timeList.get(i).getHour());
             String minutes = String.valueOf(timeList.get(i).getMinute());
+            if(hour.length() < 2){
+                hour = "0" + hour;
+            }
+            if(minutes.length() < 2){
+                minutes = "0" + minutes;
+            }
+
             String time = hour + ":" + minutes;
             e.setEditTextValue(time);
             editModel.add(e);

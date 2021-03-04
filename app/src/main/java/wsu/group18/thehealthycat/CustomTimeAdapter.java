@@ -57,8 +57,8 @@ public class CustomTimeAdapter extends RecyclerView.Adapter<CustomTimeAdapter.My
             minutes = 0;
         }
         else{
-            hour = Integer.valueOf(time.substring(0, 1));
-            minutes = Integer.valueOf(time.substring(3, 4));
+            hour = Integer.valueOf(time.substring(0, 2));
+            minutes = Integer.valueOf(time.substring(3, 5));
         }
 
         holder.timePicker.setHour(hour);

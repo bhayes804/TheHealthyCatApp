@@ -19,7 +19,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    public Cat cat;
+    public Cat cat = new Cat();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
         boolean hasStarted = prefs.getBoolean("hasStarted", true);
-
-        cat = new Cat();
 
         //The following code executes if returning from the settings activity with saved changes.
         String settingsName = getIntent().getStringExtra("CAT_NAME");
