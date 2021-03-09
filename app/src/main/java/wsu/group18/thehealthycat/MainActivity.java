@@ -19,7 +19,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    public Cat cat;
+    public Cat cat = new Cat();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
         boolean hasStarted = prefs.getBoolean("hasStarted", true);
-
-        cat = new Cat();
 
         //The following code executes if returning from the settings activity with saved changes.
         String settingsName = getIntent().getStringExtra("CAT_NAME");
@@ -61,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("CAT_NAME", cat.getName());
         intent.putExtra("CAT_TARGET_WEIGHT", cat.getTargetWeightLBS());
         intent.putExtra("CAT_CURRENT_WEIGHT", cat.getCurrentWeightLBS());
+        intent.putExtra("CAT_FEEDING_TIMES", (ArrayList) cat.getFeedingTimes());
+        intent.putExtra("CAT_FEEDING_FREQ", String.valueOf(cat.getFeedingTimes().size()));
         startActivity(intent);
     }
 

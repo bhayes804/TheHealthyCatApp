@@ -20,7 +20,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.sql.Array;
+import java.sql.Time;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
@@ -81,11 +84,21 @@ public class SettingsActivity extends AppCompatActivity {
 
         String name = getIntent().getStringExtra("CAT_NAME");
         String targetWeight = String.valueOf(getIntent().getDoubleExtra("CAT_TARGET_WEIGHT", 0.0));
+        String feedingFreq = getIntent().getStringExtra("CAT_FEEDING_FREQ");
+        ArrayList<LocalTime> incomingFeedingTimes = (ArrayList<LocalTime>) getIntent().getSerializableExtra("CAT_FEEDING_TIMES");
         if(!name.isEmpty()){
             cName.setText(name);
         }
         if(!targetWeight.isEmpty()){
             cTargetWeight.setText(targetWeight);
+        }
+        if(!feedingFreq.isEmpty()){
+            FeedingFequencyEditor.setText(feedingFreq);
+        }
+        if(incomingFeedingTimes != null){
+            ArrayList<TimeEditModel> t = ConvertListToTimeEditModel(incomingFeedingTimes);
+            editModelArrayList = t;
+            customAdapter.UpdateList(t);
         }
     }
 
@@ -105,12 +118,13 @@ public class SettingsActivity extends AppCompatActivity {
     }*/
 
     public void OnCancel(View v){
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        //Intent intent = new Intent(this, MainActivity.class);
+        //startActivity(intent);
+        finish();
     }
 
     public void OnSave(View v){
-        ArrayList<LocalTime> timeList = ConvertList(editModelArrayList);
+        ArrayList<LocalTime> timeList = ConvertListToLocalTime(editModelArrayList);
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("CAT_NAME", cName.getText().toString());
@@ -125,7 +139,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         for(int i = 0; i < listSize; i++){
             TimeEditModel editModel = new TimeEditModel();
-            //editModel.setEditTextValue(String.valueOf(i));
             list.add(editModel);
         }
 
@@ -133,7 +146,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public ArrayList<LocalTime> ConvertList(ArrayList<TimeEditModel> editList){
+    public ArrayList<LocalTime> ConvertListToLocalTime(ArrayList<TimeEditModel> editList){
         ArrayList<LocalTime> timeList = new ArrayList<>();
         for(int i = 0; i < editList.size(); i++){
             try {
@@ -151,6 +164,26 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
         return timeList;
+    }
+
+    public ArrayList<TimeEditModel> ConvertListToTimeEditModel(ArrayList<LocalTime> timeList){
+        ArrayList<TimeEditModel> editModel = new ArrayList<TimeEditModel>();
+        for(int i = 0; i < timeList.size(); i++){
+            TimeEditModel e = new TimeEditModel();
+            String hour = String.valueOf(timeList.get(i).getHour());
+            String minutes = String.valueOf(timeList.get(i).getMinute());
+            if(hour.length() < 2){
+                hour = "0" + hour;
+            }
+            if(minutes.length() < 2){
+                minutes = "0" + minutes;
+            }
+
+            String time = hour + ":" + minutes;
+            e.setEditTextValue(time);
+            editModel.add(e);
+        }
+        return editModel;
     }
 
     public int getFeedingFrequency(){return feedingFrequency;};
