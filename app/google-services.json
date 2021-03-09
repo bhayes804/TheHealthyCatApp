@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "242737186679",
+    "firebase_url": "https://healthycatdatabase-default-rtdb.firebaseio.com",
+    "project_id": "healthycatdatabase",
+    "storage_bucket": "healthycatdatabase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242737186679:android:8e4e6d4b7383dfd1e54372",
+        "android_client_info": {
+          "package_name": "wsu.group18.thehealthycat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "242737186679-3locserv0r54ahcd0jrekvov2nbhbtmq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2Chp1PbZc6LIbJMw2S6OwlL6ye2nZAt4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "242737186679-3locserv0r54ahcd0jrekvov2nbhbtmq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
