@@ -47,7 +47,16 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
         boolean hasStarted = prefs.getBoolean("hasStarted", true );
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        FirebaseUser currentUser;
+        FirebaseUser userFromSettings = (FirebaseUser) getIntent().getSerializableExtra("USER");
+        if(userFromSettings != null){
+            currentUser = userFromSettings;
+            hasStarted = true;
+        }
+        else {
+            currentUser = mAuth.getCurrentUser();
+        }
         if(currentUser != null){
             hasStarted=false;
         }
@@ -58,22 +67,22 @@ public class MainActivity extends AppCompatActivity {
         String settingsName = getIntent().getStringExtra("CAT_NAME");
         double settingsTargetWeight = getIntent().getDoubleExtra("CAT_TARGET_WEIGHT", 0.0);
         ArrayList<LocalTime> timeList = (ArrayList<LocalTime>) getIntent().getSerializableExtra("TIME_LIST");
+        boolean shouldShowStartup = true;
         if(settingsName != null){
             cat.setName(settingsName);
+            shouldShowStartup = false;
         }
         if(settingsTargetWeight != 0.0){
             cat.setTargetWeightLBS(settingsTargetWeight);
-
         }
         if(timeList != null){
-
             cat.setFeedingTimes(timeList);
             Toast.makeText(MainActivity.this,"times"+ timeList.toString(),Toast.LENGTH_LONG).show();
         }
-
-        if (!hasStarted) {
+        //shouldShowStartup is true if we're starting up the first time, if we return from the settingsActivity, we don't want to run this again.
+        if (shouldShowStartup) {
             showStartupDialog();
-            cat.setUser( user);
+            cat.setUser(user);
         }
 
         database = FirebaseDatabase.getInstance();
@@ -96,6 +105,9 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("CAT_NAME", cat.getName());
         intent.putExtra("CAT_TARGET_WEIGHT", cat.getTargetWeightLBS());
         intent.putExtra("CAT_CURRENT_WEIGHT", cat.getCurrentWeightLBS());
+        intent.putExtra("CAT_FEEDING_TIMES", (ArrayList) cat.getFeedingTimes());
+        intent.putExtra("CAT_FEEDING_FREQ", String.valueOf(cat.getFeedingTimes().size()));
+        intent.putExtra("USER", user);
         startActivity(intent);
     }
 
