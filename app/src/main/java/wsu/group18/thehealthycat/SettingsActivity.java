@@ -27,6 +27,17 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class SettingsActivity extends AppCompatActivity {
 
@@ -35,6 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
     public TextInputEditText FeedingFequencyEditor;
     private int feedingFrequency;
     private Button SaveButton;
+    private FirebaseUser user;
 
     private RecyclerView recyclerView;
     private CustomTimeAdapter customAdapter;
@@ -86,6 +98,7 @@ public class SettingsActivity extends AppCompatActivity {
         String targetWeight = String.valueOf(getIntent().getDoubleExtra("CAT_TARGET_WEIGHT", 0.0));
         String feedingFreq = getIntent().getStringExtra("CAT_FEEDING_FREQ");
         ArrayList<LocalTime> incomingFeedingTimes = (ArrayList<LocalTime>) getIntent().getSerializableExtra("CAT_FEEDING_TIMES");
+        FirebaseUser incomingUser = (FirebaseUser) getIntent().getSerializableExtra("USER");
         if(!name.isEmpty()){
             cName.setText(name);
         }
@@ -99,6 +112,9 @@ public class SettingsActivity extends AppCompatActivity {
             ArrayList<TimeEditModel> t = ConvertListToTimeEditModel(incomingFeedingTimes);
             editModelArrayList = t;
             customAdapter.UpdateList(t);
+        }
+        if(incomingUser != null){
+            user = incomingUser;
         }
     }
 
@@ -130,6 +146,7 @@ public class SettingsActivity extends AppCompatActivity {
         intent.putExtra("CAT_NAME", cName.getText().toString());
         intent.putExtra("CAT_TARGET_WEIGHT", Double.parseDouble(cTargetWeight.getText().toString()));
         intent.putExtra("TIME_LIST", timeList);
+        intent.putExtra("USER", user);
         startActivity(intent);
     }
 
