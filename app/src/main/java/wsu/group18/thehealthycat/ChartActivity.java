@@ -42,6 +42,7 @@ public class ChartActivity extends AppCompatActivity {
         mChart = findViewById(R.id.chart);
         mChart.setTouchEnabled(true);
         mChart.setPinchZoom(true);
+        mChart.getDescription().setText("");
         MyMarkerView mv = new MyMarkerView(getApplicationContext(), R.layout.custom_marker_view);
         mv.setChartView(mChart);
         mChart.setMarker(mv);
@@ -58,7 +59,7 @@ public class ChartActivity extends AppCompatActivity {
         XAxis xAxis = mChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setValueFormatter((new MyXAxisValueFormatter()));
-        xAxis.setLabelCount(3, true);
+        xAxis.setLabelCount(5, true);
         xAxis.enableGridDashedLine(10f, 10f, 0f);
         xAxis.setAxisMaximum((float) weights.get(weights.size()-1).getX());
         xAxis.setAxisMinimum(weights.get(0).getX());
@@ -90,11 +91,6 @@ public class ChartActivity extends AppCompatActivity {
         //manual data entered for now to test chart
 
         weights = (ArrayList)getIntent().getSerializableExtra("CAT_HISTORICAL_WEIGHTS");
-//        float dif = weights.get(1).getX() - weights.get(0).getX();
-//
-//        for(int i = 0; i < 25; i++) {
-//            weights.add(new Entry(weights.get(0).getX() + ((3+i) * dif), (float)(Math.random() * 5) + 10));
-//        }
 
         //get value for target weight
         //manual value for now to test chart
@@ -110,7 +106,7 @@ public class ChartActivity extends AppCompatActivity {
             mChart.getData().notifyDataChanged();
             mChart.notifyDataSetChanged();
         } else {
-            weightData = new LineDataSet(weights, getIntent().getStringExtra("CAT_NAME"));
+            weightData = new LineDataSet(weights, getIntent().getStringExtra("CAT_NAME") + "'s weight");
             weightData.setDrawIcons(false);
             weightData.enableDashedLine(10f, 5f, 0f);
             weightData.enableDashedHighlightLine(10f, 5f, 0f);
