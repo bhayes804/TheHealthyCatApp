@@ -46,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
     public TextInputEditText FeedingFequencyEditor;
     private int feedingFrequency;
     private Button SaveButton;
-    private FirebaseUser user;
+    private String connectionCode;
 
     private RecyclerView recyclerView;
     private CustomTimeAdapter customAdapter;
@@ -63,7 +63,6 @@ public class SettingsActivity extends AppCompatActivity {
         cTargetWeight = findViewById(R.id.TargetWeightEditText);
 
         SaveButton = findViewById(R.id.SettingsSaveButton);
-        SaveButton.setFocusableInTouchMode(false);
 
         recyclerView = findViewById(R.id.TimeEditorList);
         editModelArrayList = populateList(0);
@@ -98,7 +97,7 @@ public class SettingsActivity extends AppCompatActivity {
         String targetWeight = String.valueOf(getIntent().getDoubleExtra("CAT_TARGET_WEIGHT", 0.0));
         String feedingFreq = getIntent().getStringExtra("CAT_FEEDING_FREQ");
         ArrayList<LocalTime> incomingFeedingTimes = (ArrayList<LocalTime>) getIntent().getSerializableExtra("CAT_FEEDING_TIMES");
-        FirebaseUser incomingUser = (FirebaseUser) getIntent().getSerializableExtra("USER");
+        String incomingConnection = getIntent().getStringExtra("CONNECTION");
         if(!name.isEmpty()){
             cName.setText(name);
         }
@@ -113,29 +112,12 @@ public class SettingsActivity extends AppCompatActivity {
             editModelArrayList = t;
             customAdapter.UpdateList(t);
         }
-        if(incomingUser != null){
-            user = incomingUser;
+        if(incomingConnection != null){
+            connectionCode = incomingConnection;
         }
     }
 
-    /*public void CanSave(){
-        String name = getIntent().getStringExtra("CAT_NAME");
-        String targetWeight = String.valueOf(getIntent().getDoubleExtra("CAT_TARGET_WEIGHT", 0.0));
-
-        if(cName.toString().isEmpty() || cTargetWeight.toString().isEmpty()){
-            SaveButton.setClickable(false);
-        }
-        else if(cName.toString() != name || cTargetWeight.toString() != targetWeight){
-            SaveButton.setClickable(true);
-        }
-        else{
-            SaveButton.setClickable(false);
-        }
-    }*/
-
     public void OnCancel(View v){
-        //Intent intent = new Intent(this, MainActivity.class);
-        //startActivity(intent);
         finish();
     }
 
@@ -146,7 +128,7 @@ public class SettingsActivity extends AppCompatActivity {
         intent.putExtra("CAT_NAME", cName.getText().toString());
         intent.putExtra("CAT_TARGET_WEIGHT", Double.parseDouble(cTargetWeight.getText().toString()));
         intent.putExtra("TIME_LIST", timeList);
-        intent.putExtra("USER", user);
+        intent.putExtra("CONNECTION", connectionCode);
         startActivity(intent);
     }
 
