@@ -50,7 +50,6 @@ public class CustomTimeAdapter extends RecyclerView.Adapter<CustomTimeAdapter.My
         int hour;
         int minutes;
 
-        //holder.editText.setText(editModelArrayList.get(position).getEditTextValue());
         String time = editModelArrayList.get(position).getEditTextValue();
         if(time == null){
             hour = 12;
@@ -81,24 +80,6 @@ public class CustomTimeAdapter extends RecyclerView.Adapter<CustomTimeAdapter.My
             super(itemView);
 
             timePicker = (TimePicker) itemView.findViewById(R.id.editid);
-
-            /*editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    editModelArrayList.get(getAdapterPosition()).setEditTextValue(editText.getText().toString());
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });*/
 
             timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
                 @Override

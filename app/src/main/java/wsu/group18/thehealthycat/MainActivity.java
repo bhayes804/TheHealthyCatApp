@@ -34,7 +34,7 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "EmailPassword";
-    String ConnectioCode;
+    String ConnectionCode;
     private FirebaseAuth mAuth;
     public Cat cat;
     FirebaseDatabase database;
@@ -49,14 +49,7 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         FirebaseUser currentUser;
-        FirebaseUser userFromSettings = (FirebaseUser) getIntent().getSerializableExtra("USER");
-        if(userFromSettings != null){
-            currentUser = userFromSettings;
-            hasStarted = true;
-        }
-        else {
-            currentUser = mAuth.getCurrentUser();
-        }
+        currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
             hasStarted=false;
         }
@@ -67,10 +60,14 @@ public class MainActivity extends AppCompatActivity {
         String settingsName = getIntent().getStringExtra("CAT_NAME");
         double settingsTargetWeight = getIntent().getDoubleExtra("CAT_TARGET_WEIGHT", 0.0);
         ArrayList<LocalTime> timeList = (ArrayList<LocalTime>) getIntent().getSerializableExtra("TIME_LIST");
+        String settingsConnection = getIntent().getStringExtra("CONNECTION");
         boolean shouldShowStartup = true;
+        boolean shouldUpdateDB = false;
+
         if(settingsName != null){
             cat.setName(settingsName);
             shouldShowStartup = false;
+            shouldUpdateDB = true;
         }
         if(settingsTargetWeight != 0.0){
             cat.setTargetWeightLBS(settingsTargetWeight);
@@ -79,6 +76,10 @@ public class MainActivity extends AppCompatActivity {
             cat.setFeedingTimes(timeList);
             Toast.makeText(MainActivity.this,"times"+ timeList.toString(),Toast.LENGTH_LONG).show();
         }
+        if(settingsConnection != null){
+            ConnectionCode = settingsConnection;
+        }
+
         //shouldShowStartup is true if we're starting up the first time, if we return from the settingsActivity, we don't want to run this again.
         if (shouldShowStartup) {
             showStartupDialog();
@@ -88,13 +89,20 @@ public class MainActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("message");
 
+        if(shouldUpdateDB){
+            user = mAuth.getCurrentUser();
+            cat.setUser(user);
+            cat.updateFirebase(ConnectionCode);
+        }
+
         myRef.setValue("test three!");
     }
 
     public void OpenChartActivity(View v){
         if(cat!=null){
+            user = mAuth.getCurrentUser();
             cat.setUser(user);
-            cat.updateFirebase(ConnectioCode);
+            cat.updateFirebase(ConnectionCode);
         }
         Intent intent = new Intent(this, ChartActivity.class);
         startActivity(intent);
@@ -107,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("CAT_CURRENT_WEIGHT", cat.getCurrentWeightLBS());
         intent.putExtra("CAT_FEEDING_TIMES", (ArrayList) cat.getFeedingTimes());
         intent.putExtra("CAT_FEEDING_FREQ", String.valueOf(cat.getFeedingTimes().size()));
-        intent.putExtra("USER", user);
+        intent.putExtra("CONNECTION", ConnectionCode);
         startActivity(intent);
     }
 
@@ -169,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void makeNewUser(String email, String password) {
-        ConnectioCode=password;
+        ConnectionCode=password;
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override

@@ -54,9 +54,11 @@ public class Cat implements Serializable {
         FeedingTimes = new ArrayList<LocalTime>();
 
     }
-public void setUser(FirebaseUser user){
+
+    public void setUser(FirebaseUser user){
         User= user;
 }
+
     public Cat(String name, double targetWeight, double currentWeight, ArrayList<HistoricalWeightEvent> historicalWeightData, ArrayList<LocalTime> feedingTimes, FirebaseUser user) {
         Name = name;
         TargetWeightLBS = targetWeight;
@@ -103,9 +105,10 @@ public void setUser(FirebaseUser user){
     public void setFeedingTimes(ArrayList feedingTimes) {
         FeedingTimes = feedingTimes;
     }
-public void updateFirebase(String connection){
-    mDatabase = FirebaseDatabase.getInstance().getReference("usersData");
-    mDatabase.child(connection).setValue(this);
-}
+
+    public void updateFirebase(String connection){
+        mDatabase = FirebaseDatabase.getInstance().getReference("usersData");
+        mDatabase.child(connection).setValue(this);
+    }
 }
 
