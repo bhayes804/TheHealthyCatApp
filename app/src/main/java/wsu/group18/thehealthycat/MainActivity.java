@@ -18,9 +18,11 @@ import android.widget.Toast;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.mikephil.charting.data.Entry;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -105,6 +107,14 @@ public class MainActivity extends AppCompatActivity {
             cat.updateFirebase(ConnectionCode);
         }
         Intent intent = new Intent(this, ChartActivity.class);
+        intent.putExtra("CAT_TARGET_WEIGHT", cat.getTargetWeightLBS());
+        ArrayList<HistoricalWeightEvent> historicalWeights = (ArrayList)cat.getHistoricalWeightData();
+        ArrayList<Entry> weights = new ArrayList();
+        for(HistoricalWeightEvent e : historicalWeights) {
+            weights.add(new Entry(e.Time.atZone(ZoneId.systemDefault()).toEpochSecond(), (float)e.Weight));
+        }
+        intent.putExtra("CAT_HISTORICAL_WEIGHTS", weights);
+        intent.putExtra("CAT_NAME", cat.getName());
         startActivity(intent);
     }
 
