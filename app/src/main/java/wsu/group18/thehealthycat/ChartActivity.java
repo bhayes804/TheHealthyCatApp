@@ -90,11 +90,11 @@ public class ChartActivity extends AppCompatActivity {
         //manual data entered for now to test chart
 
         weights = (ArrayList)getIntent().getSerializableExtra("CAT_HISTORICAL_WEIGHTS");
-        float dif = weights.get(1).getX() - weights.get(0).getX();
-
-        for(int i = 0; i < 25; i++) {
-            weights.add(new Entry(weights.get(0).getX() + ((3+i) * dif), (float)(Math.random() * 5) + 10));
-        }
+//        float dif = weights.get(1).getX() - weights.get(0).getX();
+//
+//        for(int i = 0; i < 25; i++) {
+//            weights.add(new Entry(weights.get(0).getX() + ((3+i) * dif), (float)(Math.random() * 5) + 10));
+//        }
 
         //get value for target weight
         //manual value for now to test chart
