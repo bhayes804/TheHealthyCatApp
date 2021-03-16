@@ -40,6 +40,7 @@ public class Cat implements Serializable {
         TargetWeightLBS = 0.0;
         CurrentWeightLBS = 0.0;
         HistoricalWeightData = new ArrayList<HistoricalWeightEvent>();
+
         HistoricalWeightEvent first= null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             first = new HistoricalWeightEvent(13, LocalDateTime.of(2019,01,1,3,14));
