@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,14 +49,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
-        boolean hasStarted = prefs.getBoolean("hasStarted", true );
         mAuth = FirebaseAuth.getInstance();
 
         FirebaseUser currentUser;
         currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            hasStarted=false;
-        }
+
 
         cat = new Cat();
 
@@ -157,32 +156,121 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // cat = new Cat(catNameInput.getText().toString(), Double.parseDouble(targetWeightInput.getText().toString()), 0.0, new ArrayList());
-
-                cat.setName(catNameInput.getText().toString());
-                cat.setTargetWeightLBS(Double.parseDouble(targetWeightInput.getText().toString()));
-                String email = emailText.getText().toString();
-                String password = ConnectionCode.getText().toString();
-                makeNewUser(email,password);
-                Toast.makeText(MainActivity.this, "email is" + email + "pass is " + password, Toast.LENGTH_LONG).show();
-                // [START create_user_with_email]
-
-
-
-            }
-        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+                    // cat = new Cat(catNameInput.getText().toString(), Double.parseDouble(targetWeightInput.getText().toString()), 0.0, new ArrayList());
+                    cat.setName(catNameInput.getText().toString());
+                    cat.setTargetWeightLBS(Double.parseDouble(targetWeightInput.getText().toString()));
+                    String email = emailText.getText().toString();
+                    String password = ConnectionCode.getText().toString();
+                    makeNewUser(email, password);
+                    Toast.makeText(MainActivity.this, "email is" + email + "pass is " + password, Toast.LENGTH_LONG).show();
+                    // [START create_user_with_email]
             }
         });
 
-        builder.show();
+        final AlertDialog dialog = builder.create();
+        catNameInput.addTextChangedListener(new TextWatcher(){
 
-        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("hasStarted", false);
-        editor.apply();
+            private void handleText(){
+                final Button okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                if((catNameInput.getText().length() == 0) || (targetWeightInput.getText().length() == 0) || (emailText.getText().length() == 0) || (ConnectionCode.getText().length() == 0)){
+                    okButton.setEnabled(false);
+                } else{
+                  okButton.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                handleText();
+            }
+        });
+
+        targetWeightInput.addTextChangedListener(new TextWatcher(){
+
+            private void handleText(){
+                final Button okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                if((catNameInput.getText().length() == 0) || (targetWeightInput.getText().length() == 0) || (emailText.getText().length() == 0) || (ConnectionCode.getText().length() == 0)){
+                    okButton.setEnabled(false);
+                } else{
+                    okButton.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                handleText();
+            }
+        });
+
+        emailText.addTextChangedListener(new TextWatcher(){
+
+            private void handleText(){
+                final Button okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                if((catNameInput.getText().length() == 0) || (targetWeightInput.getText().length() == 0) || (emailText.getText().length() == 0) || (ConnectionCode.getText().length() == 0)){
+                    okButton.setEnabled(false);
+                } else{
+                    okButton.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                handleText();
+            }
+        });
+
+        ConnectionCode.addTextChangedListener(new TextWatcher(){
+
+            private void handleText(){
+                final Button okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                if((catNameInput.getText().length() == 0) || (targetWeightInput.getText().length() == 0) || (emailText.getText().length() == 0) || (ConnectionCode.getText().length() == 0)){
+                    okButton.setEnabled(false);
+                } else{
+                    okButton.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                handleText();
+            }
+        });
+
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        dialog.setCanceledOnTouchOutside(false);
 
     }
 
