@@ -47,6 +47,7 @@ public class SettingsActivity extends AppCompatActivity {
     private int feedingFrequency;
     private Button SaveButton;
     private String connectionCode;
+    private double currentWeight;
 
     private RecyclerView recyclerView;
     private CustomTimeAdapter customAdapter;
@@ -93,6 +94,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        currentWeight = getIntent().getDoubleExtra("CAT_CURRENT_WEIGHT", 0.0);
         String name = getIntent().getStringExtra("CAT_NAME");
         String targetWeight = String.valueOf(getIntent().getDoubleExtra("CAT_TARGET_WEIGHT", 0.0));
         String feedingFreq = getIntent().getStringExtra("CAT_FEEDING_FREQ");
@@ -129,6 +131,7 @@ public class SettingsActivity extends AppCompatActivity {
         intent.putExtra("CAT_TARGET_WEIGHT", Double.parseDouble(cTargetWeight.getText().toString()));
         intent.putExtra("TIME_LIST", timeList);
         intent.putExtra("CONNECTION", connectionCode);
+        intent.putExtra("CAT_CURRENT_WEIGHT", currentWeight);
         startActivity(intent);
     }
 
