@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.github.mikephil.charting.data.Entry;
@@ -50,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
         mAuth = FirebaseAuth.getInstance();
-
         FirebaseUser currentUser;
         currentUser = mAuth.getCurrentUser();
 
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         //The following code executes if returning from the settings activity with saved changes.
         String settingsName = getIntent().getStringExtra("CAT_NAME");
         double settingsTargetWeight = getIntent().getDoubleExtra("CAT_TARGET_WEIGHT", 0.0);
+        double settingsCurrentWeight = getIntent().getDoubleExtra("CAT_CURRENT_WEIGHT", 0.0);
         ArrayList<LocalTime> timeList = (ArrayList<LocalTime>) getIntent().getSerializableExtra("TIME_LIST");
         String settingsConnection = getIntent().getStringExtra("CONNECTION");
         boolean shouldShowStartup = true;
@@ -72,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if(settingsTargetWeight != 0.0){
             cat.setTargetWeightLBS(settingsTargetWeight);
+        }
+        if(settingsCurrentWeight != 0.0){
+            cat.setCurrentWeightLBS(settingsCurrentWeight);
         }
         if(timeList != null){
             cat.setFeedingTimes(timeList);
@@ -97,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         myRef.setValue("test three!");
+
     }
 
     public void OpenChartActivity(View v){
@@ -164,6 +170,26 @@ public class MainActivity extends AppCompatActivity {
                     makeNewUser(email, password);
                     Toast.makeText(MainActivity.this, "email is" + email + "pass is " + password, Toast.LENGTH_LONG).show();
                     // [START create_user_with_email]
+              
+                    DatabaseReference r = FirebaseDatabase.getInstance().getReference();
+                    Task<DataSnapshot> snapshotTask;
+                    try {
+                        snapshotTask = r.child("usersData").child(password).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                          @Override
+                          public void onComplete(@NonNull Task<DataSnapshot> task) {
+                            if (!task.isSuccessful()) {
+                                Log.e("firebase", "Error getting data", task.getException());
+                            }
+                            else {
+                                HashMap hashCat = (HashMap)task.getResult().getValue();
+                                ParseHashMap(hashCat);
+                            }
+                        }
+                    });
+                }
+                catch(Exception e){
+                    System.out.println(e);
+                }
             }
         });
 
@@ -302,5 +328,21 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
         // [END create_user_with_email]
+    }
+
+    public void ParseHashMap(HashMap hashMap){
+        String hashName = hashMap.get("name").toString();
+        double hashCurrentWeight = Double.valueOf(hashMap.get("currentWeightLBS").toString());
+        double hashTargetWeight = Double.valueOf(hashMap.get("targetWeightLBS").toString());
+
+        if(hashName != null){
+            cat.setName(hashName);
+        }
+        if(hashCurrentWeight != 0.0){
+            cat.setCurrentWeightLBS(hashCurrentWeight);
+        }
+        if(hashTargetWeight != 0.0){
+            cat.setTargetWeightLBS(hashTargetWeight);
+        }
     }
 }
