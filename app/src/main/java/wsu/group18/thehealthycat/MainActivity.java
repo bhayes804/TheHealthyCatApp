@@ -1,6 +1,7 @@
 package wsu.group18.thehealthycat;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -105,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void OpenChartActivity(View v){
         if(cat!=null){
             user = mAuth.getCurrentUser();
@@ -175,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
                     Task<DataSnapshot> snapshotTask;
                     try {
                         snapshotTask = r.child("usersData").child(password).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                          @RequiresApi(api = Build.VERSION_CODES.O)
                           @Override
                           public void onComplete(@NonNull Task<DataSnapshot> task) {
                             if (!task.isSuccessful()) {
@@ -330,10 +333,15 @@ public class MainActivity extends AppCompatActivity {
         // [END create_user_with_email]
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void ParseHashMap(HashMap hashMap){
-        String hashName = hashMap.get("name").toString();
-        double hashCurrentWeight = Double.valueOf(hashMap.get("currentWeightLBS").toString());
-        double hashTargetWeight = Double.valueOf(hashMap.get("targetWeightLBS").toString());
+        HashMapParser hp = new HashMapParser(hashMap);
+
+        String hashName = hp.getName();
+        double hashCurrentWeight = hp.getCurrentWeight();
+        double hashTargetWeight = hp.getTargetWeight();
+        ArrayList<LocalTime> hashFeedingTimes = hp.getFeedingTimes();
+        ArrayList<HistoricalWeightEvent> hashHistoricalWeightList = hp.getHistoricalWeightData();
 
         if(hashName != null){
             cat.setName(hashName);
@@ -344,5 +352,12 @@ public class MainActivity extends AppCompatActivity {
         if(hashTargetWeight != 0.0){
             cat.setTargetWeightLBS(hashTargetWeight);
         }
+        if(hashFeedingTimes != null){
+            cat.setFeedingTimes(hashFeedingTimes);
+        }
+        if(hashHistoricalWeightList != null){
+            cat.setHistoricalWeightData(hashHistoricalWeightList);
+        }
     }
+
 }
