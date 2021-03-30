@@ -1,6 +1,7 @@
 package wsu.group18.thehealthycat;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         double settingsTargetWeight = getIntent().getDoubleExtra("CAT_TARGET_WEIGHT", 0.0);
         double settingsCurrentWeight = getIntent().getDoubleExtra("CAT_CURRENT_WEIGHT", 0.0);
         ArrayList<LocalTime> timeList = (ArrayList<LocalTime>) getIntent().getSerializableExtra("TIME_LIST");
+        //ArrayList<HistoricalWeightEvent> settingsHistoricalWeights = (ArrayList<HistoricalWeightEvent>) getIntent().getSerializableExtra("CAT_HISTORICAL_WEIGHTS");
         String settingsConnection = getIntent().getStringExtra("CONNECTION");
         boolean shouldShowStartup = true;
         boolean shouldUpdateDB = false;
@@ -82,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
             cat.setFeedingTimes(timeList);
             Toast.makeText(MainActivity.this,"times"+ timeList.toString(),Toast.LENGTH_LONG).show();
         }
+        /*if(settingsHistoricalWeights != null){
+            cat.setHistoricalWeightData(settingsHistoricalWeights);
+        }*/
         if(settingsConnection != null){
             ConnectionCode = settingsConnection;
         }
@@ -105,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void OpenChartActivity(View v){
         if(cat!=null){
             user = mAuth.getCurrentUser();
@@ -129,6 +135,8 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("CAT_TARGET_WEIGHT", cat.getTargetWeightLBS());
         intent.putExtra("CAT_CURRENT_WEIGHT", cat.getCurrentWeightLBS());
         intent.putExtra("CAT_FEEDING_TIMES", (ArrayList) cat.getFeedingTimes());
+        //For some reason this is crashing the app, not sure why.
+        //intent.putExtra("CAT_HISTORICAL_WEIGHTS", cat.getHistoricalWeightData());
         intent.putExtra("CAT_FEEDING_FREQ", String.valueOf(cat.getFeedingTimes().size()));
         intent.putExtra("CONNECTION", ConnectionCode);
         startActivity(intent);
@@ -175,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
                     Task<DataSnapshot> snapshotTask;
                     try {
                         snapshotTask = r.child("usersData").child(password).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                          @RequiresApi(api = Build.VERSION_CODES.O)
                           @Override
                           public void onComplete(@NonNull Task<DataSnapshot> task) {
                             if (!task.isSuccessful()) {
@@ -330,10 +339,15 @@ public class MainActivity extends AppCompatActivity {
         // [END create_user_with_email]
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void ParseHashMap(HashMap hashMap){
-        String hashName = hashMap.get("name").toString();
-        double hashCurrentWeight = Double.valueOf(hashMap.get("currentWeightLBS").toString());
-        double hashTargetWeight = Double.valueOf(hashMap.get("targetWeightLBS").toString());
+        HashMapParser hp = new HashMapParser(hashMap);
+
+        String hashName = hp.getName();
+        double hashCurrentWeight = hp.getCurrentWeight();
+        double hashTargetWeight = hp.getTargetWeight();
+        ArrayList<LocalTime> hashFeedingTimes = hp.getFeedingTimes();
+        ArrayList<HistoricalWeightEvent> hashHistoricalWeightList = hp.getHistoricalWeightData();
 
         if(hashName != null){
             cat.setName(hashName);
@@ -344,5 +358,12 @@ public class MainActivity extends AppCompatActivity {
         if(hashTargetWeight != 0.0){
             cat.setTargetWeightLBS(hashTargetWeight);
         }
+        if(hashFeedingTimes != null){
+            cat.setFeedingTimes(hashFeedingTimes);
+        }
+        if(hashHistoricalWeightList != null){
+            cat.setHistoricalWeightData(hashHistoricalWeightList);
+        }
     }
+
 }
