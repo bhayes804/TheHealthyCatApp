@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         double settingsTargetWeight = getIntent().getDoubleExtra("CAT_TARGET_WEIGHT", 0.0);
         double settingsCurrentWeight = getIntent().getDoubleExtra("CAT_CURRENT_WEIGHT", 0.0);
         ArrayList<LocalTime> timeList = (ArrayList<LocalTime>) getIntent().getSerializableExtra("TIME_LIST");
+        //ArrayList<HistoricalWeightEvent> settingsHistoricalWeights = (ArrayList<HistoricalWeightEvent>) getIntent().getSerializableExtra("CAT_HISTORICAL_WEIGHTS");
         String settingsConnection = getIntent().getStringExtra("CONNECTION");
         boolean shouldShowStartup = true;
         boolean shouldUpdateDB = false;
@@ -83,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
             cat.setFeedingTimes(timeList);
             Toast.makeText(MainActivity.this,"times"+ timeList.toString(),Toast.LENGTH_LONG).show();
         }
+        /*if(settingsHistoricalWeights != null){
+            cat.setHistoricalWeightData(settingsHistoricalWeights);
+        }*/
         if(settingsConnection != null){
             ConnectionCode = settingsConnection;
         }
@@ -131,6 +135,8 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("CAT_TARGET_WEIGHT", cat.getTargetWeightLBS());
         intent.putExtra("CAT_CURRENT_WEIGHT", cat.getCurrentWeightLBS());
         intent.putExtra("CAT_FEEDING_TIMES", (ArrayList) cat.getFeedingTimes());
+        //For some reason this is crashing the app, not sure why.
+        //intent.putExtra("CAT_HISTORICAL_WEIGHTS", cat.getHistoricalWeightData());
         intent.putExtra("CAT_FEEDING_FREQ", String.valueOf(cat.getFeedingTimes().size()));
         intent.putExtra("CONNECTION", ConnectionCode);
         startActivity(intent);

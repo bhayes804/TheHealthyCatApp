@@ -4,7 +4,9 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -61,7 +63,43 @@ public class HashMapParser {
         return toRtn;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public ArrayList<HistoricalWeightEvent> getHistoricalWeightData(){
-        return null;
+        Object obj = hashMap.get("historicalWeightData");
+        List<HashMap> hashList = new ArrayList<>();
+        ArrayList<HistoricalWeightEvent> toRtn = new ArrayList<>();
+
+        if(obj.getClass().isArray()){
+            hashList = Arrays.asList((HashMap[]) obj);
+        } else if (obj instanceof Collection) {
+            hashList = new ArrayList<>((Collection<HashMap>)obj);
+        }
+
+        for(int i = 0; i < hashList.size(); i++){
+            int year;
+            Month month;
+            int dayOfMonth;
+            int hour;
+            int minute;
+            double weight;
+
+            HashMap h1 = hashList.get(i);
+
+            weight = Double.valueOf(h1.get("Weight").toString());
+
+            HashMap h2 = (HashMap)h1.get("Time");
+
+            year = Integer.valueOf(h2.get("year").toString());
+            month = Month.valueOf(h2.get("month").toString());
+            dayOfMonth = Integer.valueOf(h2.get("dayOfMonth").toString());
+            hour = Integer.valueOf(h2.get("hour").toString());
+            minute = Integer.valueOf(h2.get("minute").toString());
+
+            LocalDateTime l = LocalDateTime.of(year, month, dayOfMonth, hour, minute);
+            HistoricalWeightEvent hw = new HistoricalWeightEvent(weight, l);
+            toRtn.add(hw);
+        }
+
+        return toRtn;
     }
 }

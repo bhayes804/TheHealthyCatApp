@@ -91,7 +91,7 @@ public class Cat implements Serializable {
 
     public void setCurrentWeightLBS(double currentWeightLBS) { CurrentWeightLBS = currentWeightLBS; }
 
-    public List getHistoricalWeightData() {
+    public ArrayList<HistoricalWeightEvent> getHistoricalWeightData() {
         return HistoricalWeightData;
     }
 
