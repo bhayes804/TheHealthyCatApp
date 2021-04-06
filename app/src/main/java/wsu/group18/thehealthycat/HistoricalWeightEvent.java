@@ -1,7 +1,8 @@
 package wsu.group18.thehealthycat;
 import java.time.LocalDateTime;
+import java.io.Serializable;
 
-public class HistoricalWeightEvent{
+public class HistoricalWeightEvent implements Serializable{
     public double Weight;
     public LocalDateTime Time;
 

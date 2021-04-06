@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        boolean hasStarted = prefs.getBoolean("hasStarted", true);
+
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser;
         currentUser = mAuth.getCurrentUser();
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         double settingsTargetWeight = getIntent().getDoubleExtra("CAT_TARGET_WEIGHT", 0.0);
         double settingsCurrentWeight = getIntent().getDoubleExtra("CAT_CURRENT_WEIGHT", 0.0);
         ArrayList<LocalTime> timeList = (ArrayList<LocalTime>) getIntent().getSerializableExtra("TIME_LIST");
-        //ArrayList<HistoricalWeightEvent> settingsHistoricalWeights = (ArrayList<HistoricalWeightEvent>) getIntent().getSerializableExtra("CAT_HISTORICAL_WEIGHTS");
+        ArrayList<HistoricalWeightEvent> settingsHistoricalWeights = (ArrayList<HistoricalWeightEvent>) getIntent().getSerializableExtra("CAT_HISTORICAL_WEIGHTS");
         String settingsConnection = getIntent().getStringExtra("CONNECTION");
         boolean shouldShowStartup = true;
         boolean shouldUpdateDB = false;
@@ -84,16 +86,20 @@ public class MainActivity extends AppCompatActivity {
             cat.setFeedingTimes(timeList);
             Toast.makeText(MainActivity.this,"times"+ timeList.toString(),Toast.LENGTH_LONG).show();
         }
-        /*if(settingsHistoricalWeights != null){
+        if(settingsHistoricalWeights != null){
             cat.setHistoricalWeightData(settingsHistoricalWeights);
-        }*/
+        }
         if(settingsConnection != null){
             ConnectionCode = settingsConnection;
         }
 
         //shouldShowStartup is true if we're starting up the first time, if we return from the settingsActivity, we don't want to run this again.
-        if (shouldShowStartup) {
+        if (shouldShowStartup && !hasStarted) { //This should only run on the first time running the app.
             showStartupDialog();
+            cat.setUser(user);
+        }
+        else if(shouldShowStartup && hasStarted){ //Subsequent log ins are handled through here.
+            showLoginDialog();
             cat.setUser(user);
         }
 
@@ -135,19 +141,68 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("CAT_TARGET_WEIGHT", cat.getTargetWeightLBS());
         intent.putExtra("CAT_CURRENT_WEIGHT", cat.getCurrentWeightLBS());
         intent.putExtra("CAT_FEEDING_TIMES", (ArrayList) cat.getFeedingTimes());
-        //For some reason this is crashing the app, not sure why.
-        //intent.putExtra("CAT_HISTORICAL_WEIGHTS", cat.getHistoricalWeightData());
+        intent.putExtra("CAT_HISTORICAL_WEIGHTS", cat.getHistoricalWeightData());
         intent.putExtra("CAT_FEEDING_FREQ", String.valueOf(cat.getFeedingTimes().size()));
         intent.putExtra("CONNECTION", ConnectionCode);
         startActivity(intent);
     }
 
+    //This is pretty barebones, mainly used for debugging.
     public void OpenCatInfoActivity(View v){
         Intent intent = new Intent(this, CatInfo.class);
         intent.putExtra("CAT_NAME", cat.getName());
         intent.putExtra("CAT_TARGET_WEIGHT", cat.getTargetWeightLBS());
         intent.putExtra("CAT_CURRENT_WEIGHT", cat.getCurrentWeightLBS());
         startActivity(intent);
+    }
+
+    private void showLoginDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View logInDialogView = inflater.inflate(R.layout.activity_login, null);
+        builder.setTitle("Log In to Your Healthy Cat");
+
+        final EditText userNameInput = (EditText) logInDialogView.findViewById(R.id.username);
+        final EditText passwordInput = (EditText) logInDialogView.findViewById(R.id.password);
+
+        builder.setView(logInDialogView);
+
+        builder.setPositiveButton("Log In", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String email = userNameInput.getText().toString();
+                String password = passwordInput.getText().toString();
+                signInUser(email, password);
+                Toast.makeText(MainActivity.this, "email is: " + email + "pass is: " + password, Toast.LENGTH_LONG).show();
+                // [START create_user_with_email]
+
+                DatabaseReference r = FirebaseDatabase.getInstance().getReference();
+                Task<DataSnapshot> snapshotTask;
+                try {
+                    snapshotTask = r.child("usersData").child(password).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                        @RequiresApi(api = Build.VERSION_CODES.O)
+                        @Override
+                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+                            if (!task.isSuccessful()) {
+                                Log.e("firebase", "Error getting data", task.getException());
+                            }
+                            else {
+                                HashMap hashCat = (HashMap)task.getResult().getValue();
+                                ParseHashMap(hashCat);
+                            }
+                        }
+                    });
+                }
+                catch(Exception e){
+                    System.out.println(e);
+                }
+            }
+        });
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.show();
+        dialog.setCanceledOnTouchOutside(false);
     }
 
     private void showStartupDialog() {
@@ -192,6 +247,11 @@ public class MainActivity extends AppCompatActivity {
                             else {
                                 HashMap hashCat = (HashMap)task.getResult().getValue();
                                 ParseHashMap(hashCat);
+
+                                SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = prefs.edit();
+                                editor.putBoolean("hasStarted", true);
+                                editor.apply();
                             }
                         }
                     });
@@ -337,6 +397,27 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
         // [END create_user_with_email]
+    }
+
+    private void signInUser(String email, String password){
+        ConnectionCode = password;
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInUserWithEmail:success");
+                    user = mAuth.getCurrentUser();
+                    Toast.makeText(MainActivity.this, "Authentication is ok, "+user.getUid(),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInUserWithEmail:failure", task.getException());
+                    Toast.makeText(MainActivity.this, "Authentication failed.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

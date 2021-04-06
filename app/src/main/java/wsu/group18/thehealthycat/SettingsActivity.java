@@ -52,7 +52,7 @@ public class SettingsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private CustomTimeAdapter customAdapter;
     public ArrayList<TimeEditModel> editModelArrayList;
-    //private ArrayList<HistoricalWeightEvent> historicalWeightEvents;
+    private ArrayList<HistoricalWeightEvent> historicalWeightEvents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +100,7 @@ public class SettingsActivity extends AppCompatActivity {
         String targetWeight = String.valueOf(getIntent().getDoubleExtra("CAT_TARGET_WEIGHT", 0.0));
         String feedingFreq = getIntent().getStringExtra("CAT_FEEDING_FREQ");
         ArrayList<LocalTime> incomingFeedingTimes = (ArrayList<LocalTime>) getIntent().getSerializableExtra("CAT_FEEDING_TIMES");
-        //ArrayList<HistoricalWeightEvent> incomingHistoricalWeights = (ArrayList<HistoricalWeightEvent>) getIntent().getSerializableExtra("CAT_HISTORICAL_WEIGHTS");
+        ArrayList<HistoricalWeightEvent> incomingHistoricalWeights = (ArrayList<HistoricalWeightEvent>) getIntent().getSerializableExtra("CAT_HISTORICAL_WEIGHTS");
         String incomingConnection = getIntent().getStringExtra("CONNECTION");
         if(!name.isEmpty()){
             cName.setText(name);
@@ -119,9 +119,9 @@ public class SettingsActivity extends AppCompatActivity {
         if(incomingConnection != null){
             connectionCode = incomingConnection;
         }
-        /*if(incomingHistoricalWeights != null){
+        if(incomingHistoricalWeights != null){
             historicalWeightEvents = incomingHistoricalWeights;
-        }*/
+        }
     }
 
     public void OnCancel(View v){
@@ -137,7 +137,7 @@ public class SettingsActivity extends AppCompatActivity {
         intent.putExtra("TIME_LIST", timeList);
         intent.putExtra("CONNECTION", connectionCode);
         intent.putExtra("CAT_CURRENT_WEIGHT", currentWeight);
-        //intent.putExtra("CAT_HISTORICAL_WEIGHTS", historicalWeightEvents);
+        intent.putExtra("CAT_HISTORICAL_WEIGHTS", historicalWeightEvents);
         startActivity(intent);
     }
 
