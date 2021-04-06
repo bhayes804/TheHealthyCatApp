@@ -35,6 +35,10 @@ public class HashMapParser {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public ArrayList<LocalTime> getFeedingTimes(){
         Object obj = hashMap.get("feedingTimes");
+        if(obj == null){
+            return null;
+        }
+
         List<HashMap> hashList = new ArrayList<>();
         ArrayList<LocalTime> toRtn = new ArrayList<>();
 
@@ -66,6 +70,10 @@ public class HashMapParser {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public ArrayList<HistoricalWeightEvent> getHistoricalWeightData(){
         Object obj = hashMap.get("historicalWeightData");
+        if(obj == null){
+            return null;
+        }
+
         List<HashMap> hashList = new ArrayList<>();
         ArrayList<HistoricalWeightEvent> toRtn = new ArrayList<>();
 
