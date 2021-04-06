@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        boolean hasStarted = prefs.getBoolean("hasStarted", true);
+
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser;
         currentUser = mAuth.getCurrentUser();
@@ -92,8 +94,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //shouldShowStartup is true if we're starting up the first time, if we return from the settingsActivity, we don't want to run this again.
-        if (shouldShowStartup) {
-            //showStartupDialog();
+        if (shouldShowStartup && !hasStarted) { //This should only run on the first time running the app.
+            showStartupDialog();
+            cat.setUser(user);
+        }
+        else if(shouldShowStartup && hasStarted){ //Subsequent log ins are handled through here.
             showLoginDialog();
             cat.setUser(user);
         }
@@ -242,6 +247,11 @@ public class MainActivity extends AppCompatActivity {
                             else {
                                 HashMap hashCat = (HashMap)task.getResult().getValue();
                                 ParseHashMap(hashCat);
+
+                                SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = prefs.edit();
+                                editor.putBoolean("hasStarted", true);
+                                editor.apply();
                             }
                         }
                     });
