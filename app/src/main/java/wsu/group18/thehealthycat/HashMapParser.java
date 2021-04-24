@@ -32,6 +32,10 @@ public class HashMapParser {
         return Double.valueOf(hashMap.get("targetWeightLBS").toString());
     }
 
+    public int getFeedingSize(){
+        return Integer.valueOf(hashMap.get("feedingSize").toString());
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     public ArrayList<LocalTime> getFeedingTimes(){
         Object obj = hashMap.get("feedingTimes");
