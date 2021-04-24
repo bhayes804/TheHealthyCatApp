@@ -29,6 +29,7 @@ public class Cat implements Serializable {
     private ArrayList<HistoricalWeightEvent> HistoricalWeightData;
     private ArrayList<LocalTime> FeedingTimes;
     private static final String TAG = "ReadAndWriteSnippets";
+    private int FeedingSize;
 
     // [START declare_database_ref]
     private DatabaseReference mDatabase;
@@ -40,6 +41,7 @@ public class Cat implements Serializable {
         TargetWeightLBS = 0.0;
         CurrentWeightLBS = 0.0;
         HistoricalWeightData = new ArrayList<HistoricalWeightEvent>();
+        FeedingSize = 0;
 
         HistoricalWeightEvent first= null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -60,13 +62,14 @@ public class Cat implements Serializable {
         User= user;
 }
 
-    public Cat(String name, double targetWeight, double currentWeight, ArrayList<HistoricalWeightEvent> historicalWeightData, ArrayList<LocalTime> feedingTimes, FirebaseUser user) {
+    public Cat(String name, double targetWeight, double currentWeight, ArrayList<HistoricalWeightEvent> historicalWeightData, ArrayList<LocalTime> feedingTimes, FirebaseUser user, int feedingSize) {
         Name = name;
         TargetWeightLBS = targetWeight;
         CurrentWeightLBS = currentWeight;
         HistoricalWeightData = historicalWeightData;
         FeedingTimes = feedingTimes;
         User = user;
+        FeedingSize = feedingSize;
     }
 
     public String getName() {
@@ -107,9 +110,14 @@ public class Cat implements Serializable {
         FeedingTimes = feedingTimes;
     }
 
+    public int getFeedingSize() {return FeedingSize;}
+
+    public void setFeedingSize(int feedingSize){FeedingSize = feedingSize;}
+
     public void updateFirebase(String connection){
         mDatabase = FirebaseDatabase.getInstance().getReference("usersData");
         mDatabase.child(connection).setValue(this);
     }
+
 }
 

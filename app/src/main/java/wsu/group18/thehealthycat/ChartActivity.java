@@ -91,9 +91,9 @@ public class ChartActivity extends AppCompatActivity {
         float maxWeight = weights.get(0).getY();
         float minWeight = weights.get(0).getY();
         for(Entry e : weights) {
-            if (e.getX() > maxWeight)
+            if (e.getY() > maxWeight)
                 maxWeight = e.getY();
-            if(e.getX() < minWeight)
+            if(e.getY() < minWeight)
                 minWeight = e.getY();
         }
 
