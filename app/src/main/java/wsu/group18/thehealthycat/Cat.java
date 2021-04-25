@@ -24,6 +24,7 @@ public class Cat implements Serializable {
 
     public int UID;
     private String Name;
+    private int FeedingSize;
     private double TargetWeightLBS;
     private double CurrentWeightLBS;
     private ArrayList<HistoricalWeightEvent> HistoricalWeightData;
@@ -37,6 +38,7 @@ public class Cat implements Serializable {
     FirebaseUser User;
     public Cat(){
         Name = "";
+        FeedingSize = 0;
         TargetWeightLBS = 0.0;
         CurrentWeightLBS = 0.0;
         HistoricalWeightData = new ArrayList<HistoricalWeightEvent>();
@@ -60,8 +62,9 @@ public class Cat implements Serializable {
         User= user;
 }
 
-    public Cat(String name, double targetWeight, double currentWeight, ArrayList<HistoricalWeightEvent> historicalWeightData, ArrayList<LocalTime> feedingTimes, FirebaseUser user) {
+    public Cat(String name, double targetWeight, int feedingSize, double currentWeight, ArrayList<HistoricalWeightEvent> historicalWeightData, ArrayList<LocalTime> feedingTimes, FirebaseUser user) {
         Name = name;
+        FeedingSize = feedingSize;
         TargetWeightLBS = targetWeight;
         CurrentWeightLBS = currentWeight;
         HistoricalWeightData = historicalWeightData;
@@ -75,6 +78,14 @@ public class Cat implements Serializable {
 
     public void setName(String name) {
         Name = name;
+    }
+
+    public int getFeedingSize() {
+        return FeedingSize;
+    }
+
+    public void setFeedingSize(int feedingSize) {
+        FeedingSize = feedingSize;
     }
 
     public double getTargetWeightLBS() {

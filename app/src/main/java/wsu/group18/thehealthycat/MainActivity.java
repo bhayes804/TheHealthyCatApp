@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ShareCompat;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
-        boolean hasStarted = prefs.getBoolean("hasStarted", true);
+        boolean hasStarted = prefs.getBoolean("hasStarted", false);
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser;
@@ -212,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle("Welcome to the Healthy Cat!");
 
         final EditText catNameInput = (EditText) startupDialogView.findViewById(R.id.cat_name);
+        final EditText feedingSizeInput = (EditText) startupDialogView.findViewById(R.id.feeding_size);
         final EditText targetWeightInput = (EditText) startupDialogView.findViewById(R.id.target_weight);
         final EditText emailText = (EditText) startupDialogView.findViewById(R.id.editTextEmailAddress);
         final EditText ConnectionCode = (EditText) startupDialogView.findViewById(R.id.connectionPassword);
@@ -227,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                     // cat = new Cat(catNameInput.getText().toString(), Double.parseDouble(targetWeightInput.getText().toString()), 0.0, new ArrayList());
                     cat.setName(catNameInput.getText().toString());
+                    cat.setFeedingSize(Integer.parseInt(feedingSizeInput.getText().toString()));
                     cat.setTargetWeightLBS(Double.parseDouble(targetWeightInput.getText().toString()));
                     String email = emailText.getText().toString();
                     String password = ConnectionCode.getText().toString();
@@ -246,8 +249,6 @@ public class MainActivity extends AppCompatActivity {
                             }
                             else {
                                 HashMap hashCat = (HashMap)task.getResult().getValue();
-                                ParseHashMap(hashCat);
-
                                 SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
                                 SharedPreferences.Editor editor = prefs.edit();
                                 editor.putBoolean("hasStarted", true);
@@ -267,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
 
             private void handleText(){
                 final Button okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                if((catNameInput.getText().length() == 0) || (targetWeightInput.getText().length() == 0) || (emailText.getText().length() == 0) || (ConnectionCode.getText().length() == 0)){
+                if((catNameInput.getText().length() == 0) || (feedingSizeInput.getText().length() == 0) || (targetWeightInput.getText().length() == 0) || (emailText.getText().length() == 0) || (ConnectionCode.getText().length() == 0)){
                     okButton.setEnabled(false);
                 } else{
                   okButton.setEnabled(true);
@@ -292,7 +293,32 @@ public class MainActivity extends AppCompatActivity {
 
             private void handleText(){
                 final Button okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                if((catNameInput.getText().length() == 0) || (targetWeightInput.getText().length() == 0) || (emailText.getText().length() == 0) || (ConnectionCode.getText().length() == 0)){
+                if((catNameInput.getText().length() == 0) || (feedingSizeInput.getText().length() == 0) || (targetWeightInput.getText().length() == 0) || (emailText.getText().length() == 0) || (ConnectionCode.getText().length() == 0)){
+                    okButton.setEnabled(false);
+                } else{
+                    okButton.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                handleText();
+            }
+        });
+
+        feedingSizeInput.addTextChangedListener(new TextWatcher(){
+
+            private void handleText(){
+                final Button okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                if((catNameInput.getText().length() == 0) || (feedingSizeInput.getText().length() == 0) || (targetWeightInput.getText().length() == 0) || (emailText.getText().length() == 0) || (ConnectionCode.getText().length() == 0)){
                     okButton.setEnabled(false);
                 } else{
                     okButton.setEnabled(true);
@@ -317,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
 
             private void handleText(){
                 final Button okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                if((catNameInput.getText().length() == 0) || (targetWeightInput.getText().length() == 0) || (emailText.getText().length() == 0) || (ConnectionCode.getText().length() == 0)){
+                if((catNameInput.getText().length() == 0) || (feedingSizeInput.getText().length() == 0) || (targetWeightInput.getText().length() == 0) || (emailText.getText().length() == 0) || (ConnectionCode.getText().length() == 0)){
                     okButton.setEnabled(false);
                 } else{
                     okButton.setEnabled(true);
@@ -342,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
 
             private void handleText(){
                 final Button okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                if((catNameInput.getText().length() == 0) || (targetWeightInput.getText().length() == 0) || (emailText.getText().length() == 0) || (ConnectionCode.getText().length() == 0)){
+                if((catNameInput.getText().length() == 0) || (feedingSizeInput.getText().length() == 0) || (targetWeightInput.getText().length() == 0) || (emailText.getText().length() == 0) || (ConnectionCode.getText().length() == 0)){
                     okButton.setEnabled(false);
                 } else{
                     okButton.setEnabled(true);
