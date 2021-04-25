@@ -48,6 +48,7 @@ public class SettingsActivity extends AppCompatActivity {
     private Button SaveButton;
     private String connectionCode;
     private double currentWeight;
+    private int feedingSize;
 
     private RecyclerView recyclerView;
     private CustomTimeAdapter customAdapter;
@@ -102,6 +103,7 @@ public class SettingsActivity extends AppCompatActivity {
         ArrayList<LocalTime> incomingFeedingTimes = (ArrayList<LocalTime>) getIntent().getSerializableExtra("CAT_FEEDING_TIMES");
         ArrayList<HistoricalWeightEvent> incomingHistoricalWeights = (ArrayList<HistoricalWeightEvent>) getIntent().getSerializableExtra("CAT_HISTORICAL_WEIGHTS");
         String incomingConnection = getIntent().getStringExtra("CONNECTION");
+        int incomingFeedingSize = getIntent().getIntExtra("FEEDINGSIZE", 0);
         if(!name.isEmpty()){
             cName.setText(name);
         }
@@ -122,6 +124,9 @@ public class SettingsActivity extends AppCompatActivity {
         if(incomingHistoricalWeights != null){
             historicalWeightEvents = incomingHistoricalWeights;
         }
+        if(incomingFeedingSize != 0){
+            feedingSize = incomingFeedingSize;
+        }
     }
 
     public void OnCancel(View v){
@@ -138,6 +143,7 @@ public class SettingsActivity extends AppCompatActivity {
         intent.putExtra("CONNECTION", connectionCode);
         intent.putExtra("CAT_CURRENT_WEIGHT", currentWeight);
         intent.putExtra("CAT_HISTORICAL_WEIGHTS", historicalWeightEvents);
+        intent.putExtra("FEEDINGSIZE", feedingSize);
         startActivity(intent);
     }
 

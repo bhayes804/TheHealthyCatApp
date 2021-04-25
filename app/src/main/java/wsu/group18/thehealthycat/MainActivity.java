@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<LocalTime> timeList = (ArrayList<LocalTime>) getIntent().getSerializableExtra("TIME_LIST");
         ArrayList<HistoricalWeightEvent> settingsHistoricalWeights = (ArrayList<HistoricalWeightEvent>) getIntent().getSerializableExtra("CAT_HISTORICAL_WEIGHTS");
         String settingsConnection = getIntent().getStringExtra("CONNECTION");
+        int settingsFeedingSize = getIntent().getIntExtra("FEEDINGSIZE", 0);
         boolean shouldShowStartup = true;
         boolean shouldUpdateDB = false;
 
@@ -92,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if(settingsConnection != null){
             ConnectionCode = settingsConnection;
+        }
+        if(settingsFeedingSize != 0){
+            cat.setFeedingSize(settingsFeedingSize);
         }
 
         //shouldShowStartup is true if we're starting up the first time, if we return from the settingsActivity, we don't want to run this again.
@@ -145,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("CAT_HISTORICAL_WEIGHTS", cat.getHistoricalWeightData());
         intent.putExtra("CAT_FEEDING_FREQ", String.valueOf(cat.getFeedingTimes().size()));
         intent.putExtra("CONNECTION", ConnectionCode);
+        intent.putExtra("FEEDINGSIZE", cat.getFeedingSize());
         startActivity(intent);
     }
 
@@ -248,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.e("firebase", "Error getting data", task.getException());
                             }
                             else {
-                                HashMap hashCat = (HashMap)task.getResult().getValue();
+                              
                                 SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
                                 SharedPreferences.Editor editor = prefs.edit();
                                 editor.putBoolean("hasStarted", true);
@@ -455,6 +460,7 @@ public class MainActivity extends AppCompatActivity {
         double hashTargetWeight = hp.getTargetWeight();
         ArrayList<LocalTime> hashFeedingTimes = hp.getFeedingTimes();
         ArrayList<HistoricalWeightEvent> hashHistoricalWeightList = hp.getHistoricalWeightData();
+        int hashFeedingSize = hp.getFeedingSize();
 
         if(hashName != null){
             cat.setName(hashName);
@@ -470,6 +476,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if(hashHistoricalWeightList != null){
             cat.setHistoricalWeightData(hashHistoricalWeightList);
+        }
+        if(hashFeedingSize != 0){
+            cat.setFeedingSize(hashFeedingSize);
         }
     }
 
