@@ -99,14 +99,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //shouldShowStartup is true if we're starting up the first time, if we return from the settingsActivity, we don't want to run this again.
-        if (shouldShowStartup && !hasStarted) { //This should only run on the first time running the app.
+        if (shouldShowStartup /*&& !hasStarted*/) { //This should only run on the first time running the app.
             showStartupDialog();
             cat.setUser(user);
         }
-        else if(shouldShowStartup && hasStarted){ //Subsequent log ins are handled through here.
+        /*else if(shouldShowStartup && hasStarted){ //Subsequent log ins are handled through here.
             showLoginDialog();
             cat.setUser(user);
-        }
+        }*/
 
         database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("message");
